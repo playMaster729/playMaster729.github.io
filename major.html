@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Parse URL Parameters</title>
+  <title>Generate URL with Parameters</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,45 +11,81 @@
       color: #ffffff;
       padding: 20px;
     }
-    pre {
-      background-color: #151e27;
-      padding: 15px;
+    pre, input, button {
+      display: block;
+      margin: 15px 0;
+      padding: 10px;
       border-radius: 5px;
+    }
+    input, button {
+      background-color: #151e27;
+      color: #ffffff;
+      border: 1px solid #7d8b99;
+    }
+    button {
+      cursor: pointer;
+      background-color: #50a8eb;
+      border: none;
+    }
+    button:hover {
+      background-color: #64b5ef;
     }
   </style>
 </head>
 <body>
-  <h1>URL Parameters</h1>
-  <pre id="output">Loading...</pre>
+  <h1>Generate URL with Parameters</h1>
+  <button onclick="generateUrl()">Generate URL</button>
+  <pre id="output">Click "Generate URL" to see the result...</pre>
 
   <script>
-    function parseParams() {
-      const url = new URL(window.location.href);
-      const params = new URLSearchParams(url.hash.substring(1)); // Получаем параметры после #
-      const data = {};
+    function generateUrl() {
+      const baseUrl = "https://major.bot/#";
+      const params = {
+        query_id: "AAHIohI0AwAAAMiiEjT_xL3I",
+        user: JSON.stringify({
+          id: 7316087496,
+          first_name: "Gawr🐈‍⬛",
+          last_name: "Gura",
+          username: "TIXYPIP",
+          language_code: "ru",
+          allows_write_to_pm: true,
+        }),
+        auth_date: 1728505339,
+        hash: "48f93fbacb51ea8e78773593d28f599c92a535aa881ccaff40448f36200c9a92",
+        tgWebAppVersion: "7.10",
+        tgWebAppPlatform: "android",
+        tgWebAppBotInline: 1,
+        tgWebAppThemeParams: JSON.stringify({
+          bg_color: "#212d3b",
+          section_bg_color: "#1d2733",
+          secondary_bg_color: "#151e27",
+          text_color: "#ffffff",
+          hint_color: "#7d8b99",
+          link_color: "#5eabe1",
+          button_color: "#50a8eb",
+          button_text_color: "#ffffff",
+          header_bg_color: "#242d39",
+          accent_text_color: "#64b5ef",
+          section_header_text_color: "#79c4fc",
+          subtitle_text_color: "#7b8790",
+          destructive_text_color: "#ee686f",
+          section_separator_color: "#0d1218",
+          bottom_bar_bg_color: "#151e27",
+        }),
+      };
 
-      params.forEach((value, key) => {
-        try {
-          // Пытаемся разобрать JSON, если формат подходит
-          const decodedValue = decodeURIComponent(value);
-          data[key] = decodedValue.startsWith("{") || decodedValue.startsWith("[")
-            ? JSON.parse(decodedValue)
-            : decodedValue;
-        } catch (e) {
-          data[key] = decodeURIComponent(value); // Если не JSON, просто декодируем
-        }
-      });
+      // Генерация строки параметров
+      const urlParams = Object.entries(params)
+        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+        .join("&");
 
-      return data;
+      // Итоговая ссылка
+      const fullUrl = baseUrl + urlParams;
+
+      // Отображение ссылки
+      const output = document.getElementById("output");
+      output.textContent = fullUrl;
     }
-
-    function displayParams(params) {
-      const output = document.getElementById('output');
-      output.textContent = JSON.stringify(params, null, 2); // Красивый вывод JSON
-    }
-
-    const params = parseParams();
-    displayParams(params);
   </script>
 </body>
 </html>
