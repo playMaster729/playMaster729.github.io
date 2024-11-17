@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Display URL Parameters</title>
+  <title>URL Parameters & Orientation</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #212d3b;
       color: #ffffff;
+      text-align: center;
       padding: 20px;
     }
     pre {
@@ -17,14 +18,23 @@
       border-radius: 5px;
       word-wrap: break-word;
       white-space: pre-wrap;
+      margin-bottom: 50px;
+    }
+    .arrow {
+      font-size: 100px;
+      font-weight: bold;
+      margin: 20px 0;
+      transition: transform 0.3s;
     }
   </style>
 </head>
 <body>
   <h1>Generated Link</h1>
   <pre id="output">Loading...</pre>
+  <div class="arrow" id="arrow">⬆</div>
 
   <script>
+    // Генерация ссылки из URL
     function generateLink() {
       const url = new URL(window.location.href); // Текущий URL
       const hash = url.hash; // Получаем часть после #
@@ -36,13 +46,52 @@
       return newLink;
     }
 
+    // Отображение ссылки на странице
     function displayLink(link) {
       const output = document.getElementById('output');
       output.textContent = link; // Отображаем ссылку
     }
 
+    // Обработка данных акселерометра
+    function handleOrientation(event) {
+      const arrow = document.getElementById('arrow');
+      const x = event.beta; // Наклон вперёд-назад
+      const y = event.gamma; // Наклон влево-вправо
+
+      // Устанавливаем направление стрелки
+      if (x > 45) {
+        arrow.textContent = "⬇"; // Низ
+      } else if (x < -45) {
+        arrow.textContent = "⬆"; // Верх
+      } else if (y > 30) {
+        arrow.textContent = "➡"; // Право
+      } else if (y < -30) {
+        arrow.textContent = "⬅"; // Лево
+      }
+    }
+
+    // Запрос разрешения на использование датчиков (для iOS)
+    function requestSensorPermission() {
+      if (typeof DeviceOrientationEvent !== "undefined" && typeof DeviceOrientationEvent.requestPermission === "function") {
+        DeviceOrientationEvent.requestPermission()
+          .then((response) => {
+            if (response === "granted") {
+              window.addEventListener("deviceorientation", handleOrientation);
+            } else {
+              alert("Permission denied for Device Orientation");
+            }
+          })
+          .catch(console.error);
+      } else {
+        // Для Android и других платформ
+        window.addEventListener("deviceorientation", handleOrientation);
+      }
+    }
+
+    // Инициализация
     const link = generateLink();
     displayLink(link);
+    requestSensorPermission();
   </script>
 </body>
 </html>
