@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parse URL Parameters</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #212d3b;
+      color: #ffffff;
+      padding: 20px;
+    }
+    pre {
+      background-color: #151e27;
+      padding: 15px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>URL Parameters</h1>
+  <pre id="output">Loading...</pre>
+
+  <script>
+    function parseParams() {
+      const url = new URL(window.location.href);
+      const params = new URLSearchParams(url.hash.substring(1)); // Получаем параметры после #
+      const data = {};
+
+      params.forEach((value, key) => {
+        try {
+          // Пытаемся разобрать JSON, если формат подходит
+          const decodedValue = decodeURIComponent(value);
+          data[key] = decodedValue.startsWith("{") || decodedValue.startsWith("[")
+            ? JSON.parse(decodedValue)
+            : decodedValue;
+        } catch (e) {
+          data[key] = decodeURIComponent(value); // Если не JSON, просто декодируем
+        }
+      });
+
+      return data;
+    }
+
+    function displayParams(params) {
+      const output = document.getElementById('output');
+      output.textContent = JSON.stringify(params, null, 2); // Красивый вывод JSON
+    }
+
+    const params = parseParams();
+    displayParams(params);
+  </script>
+</body>
+</html>
