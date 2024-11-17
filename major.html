@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generate URL with Parameters</title>
+  <title>Display URL Parameters</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -11,81 +11,38 @@
       color: #ffffff;
       padding: 20px;
     }
-    pre, input, button {
-      display: block;
-      margin: 15px 0;
-      padding: 10px;
-      border-radius: 5px;
-    }
-    input, button {
+    pre {
       background-color: #151e27;
-      color: #ffffff;
-      border: 1px solid #7d8b99;
-    }
-    button {
-      cursor: pointer;
-      background-color: #50a8eb;
-      border: none;
-    }
-    button:hover {
-      background-color: #64b5ef;
+      padding: 15px;
+      border-radius: 5px;
+      word-wrap: break-word;
+      white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
-  <h1>Generate URL with Parameters</h1>
-  <button onclick="generateUrl()">Generate URL</button>
-  <pre id="output">Click "Generate URL" to see the result...</pre>
+  <h1>Generated Link</h1>
+  <pre id="output">Loading...</pre>
 
   <script>
-    function generateUrl() {
-      const baseUrl = "https://major.bot/#";
-      const params = {
-        query_id: "AAHIohI0AwAAAMiiEjT_xL3I",
-        user: JSON.stringify({
-          id: 7316087496,
-          first_name: "Gawr🐈‍⬛",
-          last_name: "Gura",
-          username: "TIXYPIP",
-          language_code: "ru",
-          allows_write_to_pm: true,
-        }),
-        auth_date: 1728505339,
-        hash: "48f93fbacb51ea8e78773593d28f599c92a535aa881ccaff40448f36200c9a92",
-        tgWebAppVersion: "7.10",
-        tgWebAppPlatform: "android",
-        tgWebAppBotInline: 1,
-        tgWebAppThemeParams: JSON.stringify({
-          bg_color: "#212d3b",
-          section_bg_color: "#1d2733",
-          secondary_bg_color: "#151e27",
-          text_color: "#ffffff",
-          hint_color: "#7d8b99",
-          link_color: "#5eabe1",
-          button_color: "#50a8eb",
-          button_text_color: "#ffffff",
-          header_bg_color: "#242d39",
-          accent_text_color: "#64b5ef",
-          section_header_text_color: "#79c4fc",
-          subtitle_text_color: "#7b8790",
-          destructive_text_color: "#ee686f",
-          section_separator_color: "#0d1218",
-          bottom_bar_bg_color: "#151e27",
-        }),
-      };
+    function generateLink() {
+      const url = new URL(window.location.href); // Текущий URL
+      const hash = url.hash; // Получаем часть после #
 
-      // Генерация строки параметров
-      const urlParams = Object.entries(params)
-        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-        .join("&");
+      // Создаём новую ссылку
+      const baseUrl = url.origin + url.pathname; // Домен + путь без хэша
+      const newLink = `${baseUrl}${hash}`;
 
-      // Итоговая ссылка
-      const fullUrl = baseUrl + urlParams;
-
-      // Отображение ссылки
-      const output = document.getElementById("output");
-      output.textContent = fullUrl;
+      return newLink;
     }
+
+    function displayLink(link) {
+      const output = document.getElementById('output');
+      output.textContent = link; // Отображаем ссылку
+    }
+
+    const link = generateLink();
+    displayLink(link);
   </script>
 </body>
 </html>
